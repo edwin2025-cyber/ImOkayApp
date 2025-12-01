@@ -31,8 +31,9 @@ jobs:
         run: npm install -g vercel
 
       - name: Deploy to Vercel
-        working-directory: im_okay/build/web
-        run: vercel --prod --token=${{ secrets.VERCEL_TOKEN }} --yes
+        run: |
+          cd im_okay/build/web
+          vercel --prod --token=${{ secrets.VERCEL_TOKEN }} --yes
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
