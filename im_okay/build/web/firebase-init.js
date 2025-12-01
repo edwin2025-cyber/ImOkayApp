@@ -12,3 +12,18 @@ const firebaseConfig = {
   appId: "1:566836508326:web:bd31b835487758b0d6e667",
   measurementId: "G-YXCMLFX4DJ"
 };
+
+// Initialize Firebase on web if not already initialized
+// eslint-disable-next-line no-undef
+if (typeof firebase !== 'undefined') {
+  try {
+    // eslint-disable-next-line no-undef
+    if (firebase.apps && firebase.apps.length === 0) {
+      // eslint-disable-next-line no-undef
+      firebase.initializeApp(firebaseConfig);
+    }
+  } catch (e) {
+    // Swallow errors to avoid blocking app boot; Dart will try too
+    // console.warn('Firebase init (web) error:', e);
+  }
+}
