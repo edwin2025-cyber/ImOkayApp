@@ -8,6 +8,7 @@ import '../models/onboarding_data.dart';
 import '../widgets/premium_widgets.dart';
 import 'creator_intro.dart';
 import 'sign_in.dart';
+import '../services/email_auth_web.dart' if (dart.library.io) '../services/email_auth_mobile.dart' as email_auth;
 
 class SignUpOptionsScreen extends StatefulWidget {
   final OnboardingData onboardingData;
@@ -176,10 +177,9 @@ class _SignUpOptionsScreenState extends State<SignUpOptionsScreen> {
       await _ensureFirebaseInitialized();
       final email = _emailController.text.trim();
       final password = _passwordController.text;
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+      
+      // Use REST API on web to avoid FlutterFire channel issues
+      await email_auth.emailSignUp(email, password);
 
       final profile = UserProfile(
         name: _nameController.text.trim().split(' ').first,
@@ -201,9 +201,10 @@ class _SignUpOptionsScreenState extends State<SignUpOptionsScreen> {
           transitionDuration: const Duration(milliseconds: 400),
         ),
       );
-    } on FirebaseAuthException catch (e) {
+    } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message ?? 'Sign-up failed')),
+        SnackBar(content: Text('Sign-up failed: $e')),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);
