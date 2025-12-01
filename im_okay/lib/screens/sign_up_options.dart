@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import '../models/user_profile.dart';
 import '../models/onboarding_data.dart';
 import '../widgets/premium_widgets.dart';
@@ -25,6 +27,23 @@ class _SignUpOptionsScreenState extends State<SignUpOptionsScreen> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   bool _isLoading = false;
+
+  Future<void> _ensureFirebaseInitialized() async {
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(
+        options: const FirebaseOptions(
+          apiKey: "AIzaSyDC64q3neG5Pwxe_Ecoq-iZCYGO6qtcydo",
+          authDomain: "imokayapp-741a0.firebaseapp.com",
+          databaseURL: "https://imokayapp-741a0-default-rtdb.firebaseio.com",
+          projectId: "imokayapp-741a0",
+          storageBucket: "imokayapp-741a0.firebasestorage.app",
+          messagingSenderId: "566836508326",
+          appId: "1:566836508326:web:bd31b835487758b0d6e667",
+          measurementId: "G-YXCMLFX4DJ",
+        ),
+      );
+    }
+  }
 
   @override
   void dispose() {
@@ -68,8 +87,9 @@ class _SignUpOptionsScreenState extends State<SignUpOptionsScreen> {
   }
 
   Future<void> _handleAppleSignUp() async {
-    HapticFeedback.lightImpact();
+    if (!kIsWeb) HapticFeedback.lightImpact();
     try {
+      await _ensureFirebaseInitialized();
       final appleProvider = OAuthProvider('apple.com');
       final userCredential = await FirebaseAuth.instance.signInWithPopup(appleProvider);
       final user = userCredential.user;
@@ -107,8 +127,9 @@ class _SignUpOptionsScreenState extends State<SignUpOptionsScreen> {
   }
 
   Future<void> _handleGoogleSignUp() async {
-    HapticFeedback.lightImpact();
+    if (!kIsWeb) HapticFeedback.lightImpact();
     try {
+      await _ensureFirebaseInitialized();
       final userCredential = await FirebaseAuth.instance.signInWithPopup(GoogleAuthProvider());
       final user = userCredential.user;
       if (user != null) {
@@ -152,6 +173,7 @@ class _SignUpOptionsScreenState extends State<SignUpOptionsScreen> {
 
     setState(() => _isLoading = true);
     try {
+      await _ensureFirebaseInitialized();
       final email = _emailController.text.trim();
       final password = _passwordController.text;
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
