@@ -29,6 +29,10 @@ class _SignUpOptionsScreenState extends State<SignUpOptionsScreen> {
   bool _isLoading = false;
 
   Future<void> _ensureFirebaseInitialized() async {
+    if (kIsWeb) {
+      // On web, JS SDK initializes. Do nothing to avoid channel errors.
+      return;
+    }
     if (Firebase.apps.isEmpty) {
       await Firebase.initializeApp(
         options: const FirebaseOptions(
