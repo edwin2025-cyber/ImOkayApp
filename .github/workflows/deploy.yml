@@ -27,8 +27,13 @@ jobs:
           cd im_okay
           flutter build web --release
 
-      - name: Verify build output
-        run: ls -la im_okay/build/web
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+
+      - name: Configure git for Vercel
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
 
       - name: Deploy to Vercel
         run: vercel --prod --token=${{ secrets.VERCEL_TOKEN }} --yes --cwd im_okay/build/web
