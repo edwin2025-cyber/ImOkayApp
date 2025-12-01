@@ -4,9 +4,18 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'screens/splash_screen.dart';
 import 'theme.dart';
 import 'package:firebase_core/firebase_core.dart';
+// ignore: uri_does_not_exist
+import 'generated_plugin_registrant.dart' as web_reg;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  if (kIsWeb) {
+    // Ensure web plugins are registered
+    try {
+      // ignore: undefined_function
+      web_reg.registerPlugins();
+    } catch (_) {}
+  }
   // Initialize Firebase: on web, only if no app exists (JS may have initialized)
   try {
     await Firebase.initializeApp(
