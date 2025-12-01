@@ -39,7 +39,14 @@ class _SplashScreenState extends State<SplashScreen>
     if (!mounted) return;
     
     // Check if onboarding is complete
-    final isComplete = await OnboardingData.isComplete();
+    bool isComplete = false;
+    try {
+      isComplete = await OnboardingData.isComplete();
+    } catch (e) {
+      // If SharedPreferences fails (e.g., on web), assume not complete
+      debugPrint('Error loading onboarding data: $e');
+      isComplete = false;
+    }
     
     if (!mounted) return;
     
