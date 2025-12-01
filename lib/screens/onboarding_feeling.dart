@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'onboarding_weight.dart';
-import '../widgets/ui_components.dart';
+import '../widgets/premium_widgets.dart';
+import '../models/onboarding_data.dart';
 
 class OnboardingFeeling extends StatefulWidget {
   const OnboardingFeeling({super.key});
@@ -42,23 +43,25 @@ class _OnboardingFeelingState extends State<OnboardingFeeling> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 16),
-              const Text(
+              Text(
                 'How have you been\nfeeling lately?',
-                style: TextStyle(
-                  fontFamily: 'DM Sans',
-                  fontSize: 28,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black,
-                  height: 1.2,
+                style: theme.textTheme.displayMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
                 ),
               ),
               const SizedBox(height: 32),
@@ -69,7 +72,7 @@ class _OnboardingFeelingState extends State<OnboardingFeeling> {
                     final feeling = feelings[index];
                     final isSelected = selectedFeeling == feeling['label'];
 
-                    return SelectableCard(
+                    return PastelCard(
                       label: feeling['label'],
                       icon: feeling['icon'],
                       accentColor: feeling['color'],
@@ -84,15 +87,16 @@ class _OnboardingFeelingState extends State<OnboardingFeeling> {
                 ),
               ),
               const SizedBox(height: 16),
-              PrimaryButton(
+              PremiumButton(
                 label: 'Continue',
                 onPressed: selectedFeeling != null
                     ? () {
+                        final data = OnboardingData(mood: selectedFeeling);
                         Navigator.of(context).push(
                           PageRouteBuilder(
                             pageBuilder:
                                 (context, animation, secondaryAnimation) =>
-                                    const OnboardingWeight(),
+                                    OnboardingWeight(onboardingData: data),
                             transitionsBuilder:
                                 (context, animation, secondaryAnimation, child) {
                               return FadeTransition(

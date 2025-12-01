@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'onboarding_feeling.dart';
-import '../widgets/ui_components.dart';
+import '../widgets/premium_widgets.dart';
 
 class OnboardingWelcome extends StatefulWidget {
   const OnboardingWelcome({super.key});
@@ -46,10 +46,10 @@ class _OnboardingWelcomeState extends State<OnboardingWelcome>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: FadeTransition(
           opacity: _fadeAnimation,
@@ -65,13 +65,8 @@ class _OnboardingWelcomeState extends State<OnboardingWelcome>
                   Text(
                     "Hi, I'm glad you're here.",
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontFamily: "DmSans",
-                      fontSize: 32,
+                    style: theme.textTheme.displayMedium?.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: Colors.black,
-                      height: 1.3,
-                      letterSpacing: -0.5,
                     ),
                   ),
 
@@ -80,18 +75,13 @@ class _OnboardingWelcomeState extends State<OnboardingWelcome>
                   Text(
                     "Let's take this one step at a time.",
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontFamily: "Inter",
-                      fontSize: 17,
-                      height: 1.5,
-                      color: Color(0xFF6E6E6E),
-                    ),
+                    style: theme.textTheme.bodyLarge,
                   ),
 
                   const Spacer(),
 
-                  // Black rounded button
-                  PrimaryButton(
+                  // Premium pill button
+                  PremiumButton(
                     label: 'Begin',
                     onPressed: () {
                       Navigator.push(

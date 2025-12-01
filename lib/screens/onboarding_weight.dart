@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import 'onboarding_name.dart';
-import '../widgets/ui_components.dart';
+import 'sign_up_options.dart';
+import '../widgets/premium_widgets.dart';
+import '../models/onboarding_data.dart';
 
 class OnboardingWeight extends StatefulWidget {
-  const OnboardingWeight({super.key});
+  final OnboardingData onboardingData;
+
+  const OnboardingWeight({super.key, required this.onboardingData});
 
   @override
   State<OnboardingWeight> createState() => _OnboardingWeightState();
@@ -47,33 +50,31 @@ class _OnboardingWeightState extends State<OnboardingWeight> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 16),
-              const Text(
-                "What's been\nweighing on you?",
-                style: TextStyle(
-                  fontFamily: 'DM Sans',
-                  fontSize: 28,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black,
-                  height: 1.2,
+              Text(
+                "What's been weighing on you?",
+                style: theme.textTheme.displayMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
                 ),
               ),
               const SizedBox(height: 8),
-              const Text(
+              Text(
                 'Select all that apply',
-                style: TextStyle(
-                  fontFamily: 'Inter',
-                  fontSize: 15,
-                  color: Color(0xFF6E6E6E),
-                ),
+                style: theme.textTheme.bodySmall,
               ),
               const SizedBox(height: 32),
               Expanded(
@@ -83,7 +84,7 @@ class _OnboardingWeightState extends State<OnboardingWeight> {
                     final weight = weights[index];
                     final isSelected = selected.contains(weight['label']);
 
-                    return SelectableCard(
+                    return PastelCard(
                       label: weight['label'],
                       icon: weight['icon'],
                       accentColor: weight['color'],
@@ -102,15 +103,16 @@ class _OnboardingWeightState extends State<OnboardingWeight> {
                 ),
               ),
               const SizedBox(height: 16),
-              PrimaryButton(
+              PremiumButton(
                 label: 'Continue',
                 onPressed: selected.isNotEmpty
                     ? () {
+                        widget.onboardingData.concerns = selected.toList();
                         Navigator.of(context).push(
                           PageRouteBuilder(
                             pageBuilder:
                                 (context, animation, secondaryAnimation) =>
-                                    const OnboardingName(),
+                                    SignUpOptionsScreen(onboardingData: widget.onboardingData),
                             transitionsBuilder:
                                 (context, animation, secondaryAnimation, child) {
                               return FadeTransition(

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:im_okay/screens/dashboard.dart';
 import 'onboarding_welcome.dart';
+import '../models/onboarding_data.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -28,22 +30,30 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
-    Future.delayed(const Duration(seconds: 3), () {
-      if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) =>
-                const OnboardingWelcome(),
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-              return FadeTransition(opacity: animation, child: child);
-            },
-            transitionDuration: const Duration(milliseconds: 600),
-          ),
-        );
-      }
-    });
+    _navigateAfterDelay();
+  }
+
+  Future<void> _navigateAfterDelay() async {
+    await Future.delayed(const Duration(seconds: 3));
+    
+    if (!mounted) return;
+    
+    // Check if onboarding is complete
+    final isComplete = await OnboardingData.isComplete();
+    
+    if (!mounted) return;
+    
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            isComplete ? const DashboardScreen() : const OnboardingWelcome(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+        transitionDuration: const Duration(milliseconds: 600),
+      ),
+    );
   }
 
   @override
@@ -54,8 +64,10 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Center(
         child: FadeTransition(
           opacity: _fade,
@@ -73,13 +85,7 @@ class _SplashScreenState extends State<SplashScreen>
               // App Title
               Text(
                 "I'm Okay",
-                style: TextStyle(
-                  fontFamily: "DmSans",
-                  fontSize: 42,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.black,
-                  letterSpacing: -0.5,
-                ),
+                style: theme.textTheme.displayLarge,
               ),
 
               const SizedBox(height: 12),
@@ -87,11 +93,7 @@ class _SplashScreenState extends State<SplashScreen>
               // Clean tagline
               Text(
                 "A place for your thoughts.",
-                style: TextStyle(
-                  fontFamily: "Inter",
-                  fontSize: 16,
-                  color: Color(0xFF6E6E6E),
-                ),
+                style: theme.textTheme.bodyLarge,
               ),
             ],
           ),
